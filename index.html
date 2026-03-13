@@ -46,6 +46,18 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 3px; }
 
 /* ═══════════════════════════════════════════
+   ETL PIPELINE CANVAS
+═══════════════════════════════════════════ */
+#etl-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 2;          /* behind scene-wrapper which is z-index:10 */
+  pointer-events: none;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════
    ANIMATED GRID BACKGROUND
 ═══════════════════════════════════════════ */
 .grid-bg {
@@ -148,7 +160,7 @@ nav {
 
 /* ─── AI MAN SCENE ─── */
 .scene-wrapper {
-  position: relative; z-index: 2;
+  position: relative; z-index: 10;
   width: 100%; max-width: 900px;
   display: flex; flex-direction: column; align-items: center;
   gap: 3rem;
@@ -431,6 +443,80 @@ nav {
   width: 14px; height: 5px;
   border-bottom: 2px solid rgba(120,60,40,0.6);
   border-radius: 0 0 50% 50%;
+}
+
+/* ── EXPRESSION SYSTEM ── */
+
+
+
+
+
+
+
+/* Expression: DEEP THINK — debugging query */
+.expr-think .eye         { height: 3px; border-radius: 2px; }
+.expr-think .mouth       { width: 8px; border-bottom: 2px solid rgba(100,50,30,0.6); border-radius: 0; top: 38px; transform: translateX(-40%) rotate(-5deg); }
+
+/* Expression: AHA! — found the bug */
+.expr-aha .eye           { height: 6px; width: 8px; border-radius: 50%; }
+.expr-aha .mouth         { width: 16px; height: 6px; border-bottom: 3px solid #c05030; border-radius: 0 0 70% 70%; top: 35px; }
+
+/* Expression: COFFEE — needs caffeine */
+.expr-coffee .eye        { height: 2px; border-radius: 1px; opacity: 0.7; }
+.expr-coffee .mouth      { width: 12px; border-bottom: 2px solid rgba(120,60,40,0.5); border-radius: 0 0 20% 20%; }
+
+/* Expression: PROUD — pipeline shipped */
+.expr-proud .eye         { height: 5px; border-radius: 50% 50% 30% 30%; }
+.expr-proud .mouth       { width: 20px; height: 8px; border-bottom: 3px solid #c05030; border-radius: 0 0 80% 80%; top: 34px; }
+
+/* Eyebrows (new element added to HTML) */
+.eyebrows {
+  position: absolute; top: 13px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 10px;
+}
+.eyebrow {
+  width: 8px; height: 2px;
+  background: #1a0a02;
+  border-radius: 2px;
+  transition: transform 0.5s ease;
+}
+
+/* Sweat drop for stressed */
+.sweat {
+  position: absolute; top: 6px; right: -4px;
+  width: 5px; height: 7px;
+  background: #4af;
+  border-radius: 50% 50% 60% 60%;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.expr-stressed .sweat { opacity: 0.8; }
+
+/* Sparkle for AHA/excited */
+.sparkle {
+  position: absolute; top: -4px; right: -8px;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  animation: sparkleSpin 1s linear infinite;
+}
+.expr-aha .sparkle,
+.expr-excited .sparkle { opacity: 1; }
+@keyframes sparkleSpin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.3); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Head shake on stressed */
+.expr-stressed .head {
+  animation: headBob 2s ease-in-out infinite, headShake 0.4s ease-in-out 3;
+}
+@keyframes headShake {
+  0%,100% { transform: translateX(-50%) rotate(-1deg); }
+  25% { transform: translateX(calc(-50% + 3px)) rotate(2deg); }
+  75% { transform: translateX(calc(-50% - 3px)) rotate(-2deg); }
 }
 
 /* NECK */
@@ -1142,6 +1228,139 @@ footer {
   .desk-scene { transform: scale(0.65); }
   .holo-pipeline, .holo-code { display: none; }
 }
+
+/* ═══════════════════════════════════════════
+   SPEECH BUBBLES & EXPRESSIONS
+═══════════════════════════════════════════ */
+
+/* Speech bubble container */
+.speech-bubble {
+  position: absolute;
+  top: -68px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(2, 12, 28, 0.92);
+  border: 1.5px solid var(--cyan);
+  border-radius: 10px;
+  padding: 6px 11px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--cyan);
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 14px rgba(0,245,255,0.35), inset 0 0 8px rgba(0,245,255,0.05);
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  animation: bubblePop 0.3s ease forwards;
+}
+/* tail */
+.speech-bubble::after {
+  content: '';
+  position: absolute; bottom: -7px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid var(--cyan);
+}
+.speech-bubble.green {
+  border-color: var(--green); color: var(--green);
+  box-shadow: 0 0 14px rgba(57,255,20,0.35), inset 0 0 8px rgba(57,255,20,0.05);
+}
+.speech-bubble.green::after { border-top-color: var(--green); }
+.speech-bubble.amber {
+  border-color: var(--amber); color: var(--amber);
+  box-shadow: 0 0 14px rgba(255,184,0,0.35), inset 0 0 8px rgba(255,184,0,0.05);
+}
+.speech-bubble.amber::after { border-top-color: var(--amber); }
+
+@keyframes bubblePop {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.7) translateY(6px); }
+  60%  { opacity: 1; transform: translateX(-50%) scale(1.05) translateY(-1px); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+}
+@keyframes bubbleFade {
+  0%   { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+}
+.speech-bubble.hiding {
+  animation: bubbleFade 0.3s ease forwards;
+}
+
+/* ── FACIAL EXPRESSION STATES ── */
+/* default mouth = gentle smile (already via border-radius) */
+
+/* EXCITED: big smile */
+.head.expr-excited .mouth {
+  width: 18px; height: 7px;
+  border-bottom: 3px solid rgba(57,255,20,0.8);
+  border-radius: 0 0 60% 60%;
+  top: 36px;
+}
+.head.expr-excited .eye {
+  height: 6px;
+  background: #0a0505;
+}
+
+/* THINKING: one eyebrow raised, mouth slight smirk */
+.head.expr-thinking .mouth {
+  width: 12px; height: 4px;
+  border-bottom: 2px solid rgba(0,245,255,0.7);
+  border-radius: 0 0 60% 20%;
+  left: calc(50% + 1px);
+}
+/* thinking dot pulse */
+.head.expr-thinking::before {
+  content: '...';
+  position: absolute; top: 4px; right: -18px;
+  font-size: 0.55rem; color: var(--cyan);
+  animation: thinkDots 1s steps(3, end) infinite;
+  letter-spacing: 1px;
+}
+@keyframes thinkDots {
+  0%   { content: '.  '; }
+  33%  { content: '.. '; }
+  66%  { content: '...'; }
+  100% { content: '.  '; }
+}
+
+/* FOCUSED: narrowed eyes, straight mouth */
+.head.expr-focused .eye {
+  height: 3px;
+  transform: scaleY(0.6);
+}
+.head.expr-focused .mouth {
+  width: 14px; height: 2px;
+  border-bottom: 2px solid rgba(160,100,60,0.7);
+  border-radius: 0;
+  top: 38px;
+}
+
+/* SURPRISED: wide eyes, O mouth */
+.head.expr-surprised .eye {
+  width: 8px; height: 7px;
+  border-radius: 50%;
+}
+.head.expr-surprised .mouth {
+  width: 10px; height: 8px;
+  border: 2px solid rgba(255,184,0,0.7);
+  border-radius: 50%;
+  border-top: none;
+  top: 36px;
+}
+
+/* HAPPY: squint smile */
+.head.expr-happy .eye {
+  height: 3px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: #1a0a05;
+}
+.head.expr-happy .mouth {
+  width: 20px; height: 8px;
+  border-bottom: 2.5px solid rgba(57,255,20,0.9);
+  border-radius: 0 0 80% 80%;
+  top: 35px;
+}
 </style>
 </head>
 <body>
@@ -1181,6 +1400,8 @@ footer {
      HERO
 ═══════════════════════════════════════════ -->
 <section id="hero">
+  <!-- ETL Pipeline Background Canvas -->
+  <canvas id="etl-canvas"></canvas>
   <!-- Particles -->
   <div class="particles" id="particles"></div>
 
@@ -1294,14 +1515,21 @@ footer {
       <div class="person" style="left:50%;transform:translateX(-50%) translateY(-10px);">
         <!-- Head -->
         <div style="position:relative;width:46px;height:62px;margin:0 auto;">
-          <div class="head">
+          <div class="head" id="char-head">
+            <div class="speech-bubble" id="speech-bubble"></div>
             <div class="hair"></div>
+            <div class="eyebrows">
+              <div class="eyebrow"></div>
+              <div class="eyebrow"></div>
+            </div>
             <div class="eyes">
               <div class="eye"></div>
               <div class="eye"></div>
             </div>
             <div class="nose"></div>
             <div class="mouth"></div>
+            <div class="sweat"></div>
+            <span class="sparkle">✦</span>
             <div class="neck"></div>
           </div>
         </div>
@@ -1896,6 +2124,307 @@ function closeMenu()  { document.getElementById('mobileMenu').classList.remove('
   bars.forEach(b => obs.observe(b));
 })();
 
+/* ── ETL PIPELINE BACKGROUND ── */
+(function() {
+  /* Wait for DOM layout so offsetWidth is real */
+  function init() {
+    const canvas = document.getElementById('etl-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    /* ── resize: always use hero section dimensions ── */
+    function resize() {
+      const hero = document.getElementById('hero');
+      canvas.width  = hero ? hero.offsetWidth  : window.innerWidth;
+      canvas.height = hero ? hero.offsetHeight : window.innerHeight;
+      buildNodes();
+    }
+
+    /* ── colours ── */
+    const C = {
+      cyan:   '#00F5FF',
+      green:  '#39FF14',
+      amber:  '#FFB800',
+      purple: '#B06AFF',
+    };
+
+    /* ── ETL stages: DATA SOURCE → INGEST → BRONZE → SILVER → GOLD → SERVE ── */
+    const STAGES = [
+      { label:'DATA SOURCE', sub:'S3 · Kafka · RDS',  color: C.amber  },
+      { label:'INGEST',      sub:'Glue · ADF',        color: C.cyan   },
+      { label:'BRONZE',      sub:'Raw Landing',       color: C.amber  },
+      { label:'SILVER',      sub:'Clean · Validate',  color: C.cyan   },
+      { label:'GOLD',        sub:'Analytics-Ready',   color: C.green  },
+      { label:'SERVE',       sub:'BI · ML · APIs',    color: C.purple },
+    ];
+
+    /* ── node layout: horizontal row sitting at ~60% height of hero ──
+       This places the pipeline BEHIND and BELOW the desk scene          */
+    let nodes = [];
+    function buildNodes() {
+      const W = canvas.width, H = canvas.height;
+      if (W === 0 || H === 0) return;
+      const n = STAGES.length;
+      const padX = W * 0.04;
+      const step = (W - padX * 2) / (n - 1);
+      /* Position at ~38% of hero height — sits BEHIND the desk/computer scene.
+         The desk scene is in the top half of hero, so 38% places pipeline
+         right underneath the computer graphic, not in the text below it.    */
+      const baseY   = H * 0.38;
+      const waveAmp = H * 0.05;
+      /* Smaller radius so nodes look like background elements behind the scene */
+      const nodeR = Math.min(W * 0.030, 32, H * 0.055);
+      nodes = STAGES.map((s, i) => ({
+        ...s,
+        x: padX + i * step,
+        y: baseY + Math.sin((i / (n - 1)) * Math.PI) * waveAmp,
+        r: nodeR,
+        pulse: (i / n) * Math.PI * 2,
+      }));
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    /* ── data packets ── */
+    const packets = [];
+    function spawnPacket(idx) {
+      if (idx >= nodes.length - 1 || nodes.length === 0) return;
+      packets.push({
+        idx, t: 0,
+        speed: 0.003 + Math.random() * 0.003,
+        color: nodes[idx].color,
+        size:  5 + Math.random() * 4,
+        trail: [],
+        diamond: Math.random() > 0.5,
+      });
+    }
+    /* staggered initial spawn */
+    STAGES.forEach((_, i) => {
+      if (i < STAGES.length - 1)
+        setTimeout(() => spawnPacket(i), i * 450 + Math.random() * 200);
+    });
+    setInterval(() => spawnPacket(Math.floor(Math.random() * (STAGES.length - 1))), 550);
+
+    /* ── floating data-engineering keywords ── */
+    const floaters = [];
+    const WORDS = [
+      'SELECT *','dbt run','MERGE INTO','Snowpipe','DAG ✓','PySpark',
+      'Delta Lake','RBAC','SCD Type 2','99.5% uptime','→ Gold','Airflow',
+      'Kafka','Terraform','medallion','PHI masked','batch OK','stream ↑',
+    ];
+    function spawnFloater() {
+      const W = canvas.width, H = canvas.height;
+      if (W === 0 || H === 0) return;
+      floaters.push({
+        text: WORDS[Math.floor(Math.random() * WORDS.length)],
+        x: W * 0.05 + Math.random() * W * 0.90,
+        y: H * 0.45 + Math.random() * H * 0.10,
+        vy: -(0.20 + Math.random() * 0.30),
+        alpha: 0, fadeIn: true,
+        color: [C.cyan, C.green, C.amber, C.purple][Math.floor(Math.random() * 4)],
+        size:  9 + Math.random() * 6,
+      });
+    }
+    setInterval(spawnFloater, 480);
+
+    /* ── helper: draw a hexagon path ── */
+    function hex(cx, cy, r) {
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (Math.PI / 3) * k - Math.PI / 6;
+        const x = cx + r * Math.cos(a);
+        const y = cy + r * Math.sin(a);
+        k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+    }
+
+    /* ── main draw loop ── */
+    let raf = null;
+    function draw() {
+      const W = canvas.width, H = canvas.height;
+      if (W === 0 || H === 0) { raf = requestAnimationFrame(draw); return; }
+      ctx.clearRect(0, 0, W, H);
+      const t = performance.now() / 1000;
+
+      /* Clip: only draw in the top 55% of the hero — keeps pipeline
+         strictly behind the computer graphic, never over the text below */
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, W, H * 0.58);
+      ctx.clip();
+
+      /* === PIPES === */
+      for (let i = 0; i < nodes.length - 1; i++) {
+        const a = nodes[i], b = nodes[i + 1];
+
+        /* wide soft glow halo */
+        const halo = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+        halo.addColorStop(0,   a.color + '2A');
+        halo.addColorStop(0.5, b.color + '18');
+        halo.addColorStop(1,   b.color + '2A');
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = halo; ctx.lineWidth = 20; ctx.setLineDash([]); ctx.stroke();
+        ctx.restore();
+
+        /* animated dashed core */
+        const core = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+        core.addColorStop(0, a.color + 'CC');
+        core.addColorStop(1, b.color + 'CC');
+        ctx.save();
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = core; ctx.lineWidth = 2.5;
+        ctx.setLineDash([10, 7]); ctx.lineDashOffset = -t * 24;
+        ctx.shadowColor = a.color; ctx.shadowBlur = 6;
+        ctx.stroke();
+        ctx.shadowBlur = 0; ctx.restore();
+
+        /* traveling pulse orb along each pipe */
+        const sweep = (t * 0.22 + i * 0.20) % 1;
+        const sx = a.x + (b.x - a.x) * sweep;
+        const sy = a.y + (b.y - a.y) * sweep;
+        const orbG = ctx.createRadialGradient(sx, sy, 0, sx, sy, 30);
+        orbG.addColorStop(0,   a.color + 'DD');
+        orbG.addColorStop(0.4, a.color + '55');
+        orbG.addColorStop(1,   'transparent');
+        ctx.beginPath(); ctx.arc(sx, sy, 30, 0, Math.PI * 2);
+        ctx.fillStyle = orbG; ctx.fill();
+      }
+
+      /* === NODES (hexagons) === */
+      nodes.forEach(n => {
+        n.pulse += 0.022;
+        const ps = 1 + Math.sin(n.pulse) * 0.07;
+        const r  = n.r * ps;
+
+        /* outer aura glow */
+        const aura = ctx.createRadialGradient(n.x, n.y, r * 0.2, n.x, n.y, r * 2.6);
+        aura.addColorStop(0,   n.color + '35');
+        aura.addColorStop(0.5, n.color + '15');
+        aura.addColorStop(1,   'transparent');
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = aura; ctx.fill();
+
+        /* hexagon body */
+        ctx.save();
+        hex(n.x, n.y, r);
+        const fill = ctx.createRadialGradient(n.x, n.y - r * 0.3, 0, n.x, n.y, r);
+        fill.addColorStop(0, n.color + '60');
+        fill.addColorStop(1, n.color + '18');
+        ctx.fillStyle = fill; ctx.fill();
+
+        hex(n.x, n.y, r);
+        ctx.strokeStyle = n.color + 'DD';
+        ctx.lineWidth = 2.2;
+        ctx.shadowColor = n.color; ctx.shadowBlur = 16;
+        ctx.stroke();
+        ctx.shadowBlur = 0; ctx.restore();
+
+        /* inner small circle */
+        ctx.save();
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 0.45, 0, Math.PI * 2);
+        ctx.strokeStyle = n.color + '99'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.restore();
+
+        /* stage label above node */
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.font = `bold 10px 'Space Mono', monospace`;
+        ctx.fillStyle = n.color;
+        ctx.shadowColor = n.color; ctx.shadowBlur = 10;
+        ctx.fillText(n.label, n.x, n.y - r - 10);
+        ctx.shadowBlur = 0;
+        ctx.font = `8px 'Space Mono', monospace`;
+        ctx.fillStyle = 'rgba(255,255,255,0.50)';
+        ctx.fillText(n.sub, n.x, n.y - r + 1);
+        ctx.restore();
+      });
+
+      /* === PACKETS === */
+      for (let pi = packets.length - 1; pi >= 0; pi--) {
+        const pk = packets[pi];
+        pk.t += pk.speed;
+        if (pk.t >= 1) { packets.splice(pi, 1); continue; }
+        if (nodes.length < 2) continue;
+
+        const a = nodes[pk.idx], b = nodes[pk.idx + 1];
+        if (!a || !b) { packets.splice(pi, 1); continue; }
+        const px = a.x + (b.x - a.x) * pk.t;
+        const py = a.y + (b.y - a.y) * pk.t;
+
+        /* glowing trail */
+        pk.trail.push({ x: px, y: py });
+        if (pk.trail.length > 24) pk.trail.shift();
+        pk.trail.forEach((tp, ti) => {
+          const al = (ti / pk.trail.length) * 0.70;
+          const sr = pk.size * (ti / pk.trail.length) * 0.75;
+          if (sr < 0.4) return;
+          ctx.beginPath(); ctx.arc(tp.x, tp.y, sr, 0, Math.PI * 2);
+          ctx.fillStyle = pk.color + Math.floor(al * 255).toString(16).padStart(2, '0');
+          ctx.fill();
+        });
+
+        /* packet head */
+        ctx.save();
+        ctx.shadowColor = pk.color; ctx.shadowBlur = 18;
+        ctx.beginPath();
+        if (pk.diamond) {
+          ctx.moveTo(px, py - pk.size * 1.3);
+          ctx.lineTo(px + pk.size * 0.9, py);
+          ctx.lineTo(px, py + pk.size * 1.3);
+          ctx.lineTo(px - pk.size * 0.9, py);
+          ctx.closePath();
+        } else {
+          ctx.arc(px, py, pk.size, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = pk.color; ctx.fill();
+        ctx.shadowBlur = 0; ctx.restore();
+      }
+
+      /* === FLOATING KEYWORDS === */
+      for (let fi = floaters.length - 1; fi >= 0; fi--) {
+        const f = floaters[fi];
+        f.y += f.vy;
+        if (f.fadeIn) { f.alpha = Math.min(1, f.alpha + 0.04); if (f.alpha >= 1) f.fadeIn = false; }
+        else          { f.alpha = Math.max(0, f.alpha - 0.008); }
+        if (f.alpha <= 0) { floaters.splice(fi, 1); continue; }
+        ctx.save();
+        ctx.globalAlpha = f.alpha * 0.55;
+        ctx.font = `${f.size}px 'Space Mono', monospace`;
+        ctx.fillStyle = f.color; ctx.textAlign = 'center';
+        ctx.shadowColor = f.color; ctx.shadowBlur = 8;
+        ctx.fillText(f.text, f.x, f.y);
+        ctx.restore();
+      }
+
+      ctx.restore(); /* end clip region */
+      raf = requestAnimationFrame(draw);
+    }
+
+    /* pause when hero not visible (perf) */
+    const hero = document.getElementById('hero');
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { if (!raf) { raf = requestAnimationFrame(draw); } }
+        else { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+      });
+    }, { threshold: 0.05 }).observe(hero);
+
+    /* kick off */
+    raf = requestAnimationFrame(draw);
+  }
+
+  /* Run after full page layout */
+  if (document.readyState === 'complete') {
+    init();
+  } else {
+    window.addEventListener('load', init);
+  }
+})();
+
+
 /* ── ACTIVE NAV ── */
 (function() {
   const sections = document.querySelectorAll('section[id]');
@@ -1908,6 +2437,71 @@ function closeMenu()  { document.getElementById('mobileMenu').classList.remove('
     });
   });
 })();
+
+/* ── CHARACTER EXPRESSIONS ── */
+(function() {
+  const head    = document.getElementById('char-head');
+  const bubble  = document.getElementById('speech-bubble');
+  if (!head || !bubble) return;
+
+  /* Data-engineer phrases with expression + colour */
+  const phrases = [
+    { text: '🔥 dbt run --full-refresh',   expr: 'excited',   color: 'green' },
+    { text: '🤔 Why is this DAG failing?',  expr: 'thinking',  color: ''      },
+    { text: '⚡ Snowflake query: 0.3s!',    expr: 'happy',     color: 'green' },
+    { text: '📊 SELECT * FROM gold_layer',  expr: 'focused',   color: ''      },
+    { text: '🚀 Pipeline deployed! ✓',      expr: 'excited',   color: 'green' },
+    { text: '😮 50M rows processed!',       expr: 'surprised', color: 'amber' },
+    { text: '🔐 HIPAA audit passed ✓',      expr: 'happy',     color: 'green' },
+    { text: '⚙️  Terraform apply...',       expr: 'thinking',  color: ''      },
+    { text: '📈 ↓40% ingestion latency!',   expr: 'excited',   color: 'green' },
+    { text: '🧊 Snowpipe streaming live',   expr: 'focused',   color: ''      },
+    { text: '💡 medallion architecture!',   expr: 'happy',     color: 'amber' },
+    { text: '🤖 RAG pipeline connected',    expr: 'surprised', color: 'green' },
+    { text: '🏆 99.5% pipeline uptime',     expr: 'excited',   color: 'green' },
+    { text: '🔍 Data quality check ✓',      expr: 'focused',   color: ''      },
+  ];
+
+  const expressions = ['expr-excited','expr-thinking','expr-focused','expr-surprised','expr-happy'];
+  let idx = 0;
+  let hideTimer = null, nextTimer = null;
+
+  function showPhrase() {
+    const p = phrases[idx];
+
+    /* clear old expression classes */
+    expressions.forEach(e => head.classList.remove(e));
+
+    /* set new expression */
+    head.classList.add('expr-' + p.expr);
+
+    /* reset bubble */
+    bubble.className = 'speech-bubble' + (p.color ? ' ' + p.color : '');
+    bubble.textContent = p.text;
+    bubble.style.display = 'block';
+
+    /* schedule hide */
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      bubble.classList.add('hiding');
+      setTimeout(() => {
+        bubble.style.display = 'none';
+        bubble.classList.remove('hiding');
+        /* clear expression back to neutral */
+        expressions.forEach(e => head.classList.remove(e));
+      }, 300);
+    }, 2800);
+
+    idx = (idx + 1) % phrases.length;
+  }
+
+  /* stagger start so page has time to render */
+  setTimeout(() => {
+    showPhrase();
+    nextTimer = setInterval(showPhrase, 4000);
+  }, 2000);
+})();
+
 </script>
 </body>
 </html>
